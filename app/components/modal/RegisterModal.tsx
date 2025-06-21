@@ -9,6 +9,8 @@ import Input from '../inputs/Input';
 import { FcGoogle } from 'react-icons/fc';
 import Button from '../Button';
 import { AiFillGithub } from 'react-icons/ai';
+import toast from 'react-hot-toast';
+import axios from 'axios';
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
@@ -25,6 +27,23 @@ const RegisterModal = () => {
       password: '',
     },
   });
+
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+    setIsLoading(true);
+
+    axios
+      .post('/api/register', data)
+      .then(() => {
+        toast.success('Registered!');
+        registerModal.onClose();
+      })
+      .catch((error) => {
+        toast.error(error);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  };
 
   const bodyContent = (
     <div className="flex flex-col gap-4">
@@ -92,12 +111,11 @@ const RegisterModal = () => {
   return (
     <Modal
       disabled={isLoading}
-      // isOpen={registerModal.isOpen}
-      isOpen
+      isOpen={registerModal.isOpen}
       title="Register"
       actionLabel="Continue"
       onClose={registerModal.onClose}
-      onSubmit={() => {}}
+      onSubmit={handleSubmit(onSubmit)}
       body={bodyContent}
       footer={footerContent}
     />

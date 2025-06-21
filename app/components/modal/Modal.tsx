@@ -100,13 +100,13 @@ const Modal: React.FC<ModalProps> = ({
         >
           {/* content */}
           <div
-            className="
+            className={`
               translate
               duration-300
               h-full
-              translate-y-0
-              opacity-100
-            "
+              ${showModal ? 'translate-y-0' : 'translate-y-full'}
+              ${showModal ? 'opacity-100' : 'opacity-0'}
+            `}
           >
             <div
               className="
@@ -139,6 +139,7 @@ const Modal: React.FC<ModalProps> = ({
                 "
               >
                 <button
+                  onClick={handleClose}
                   className="
                     p-1
                     border-0
