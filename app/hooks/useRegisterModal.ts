@@ -1,4 +1,3 @@
-import { deflate } from 'zlib';
 import { create } from 'zustand';
 
 interface RegisterModalStore {

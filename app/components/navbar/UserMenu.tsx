@@ -6,8 +6,16 @@ import Avatar from '../Avartar';
 import MenuItem from './MenuItem';
 import useRegisterModal from '@/app/hooks/useRegisterModal';
 import useLoginModal from '@/app/hooks/useLoginModal';
+import { SafeUser } from '@/app/types';
+import { useRouter } from 'next/navigation';
+import { signOut } from 'next-auth/react';
 
-const UserMenu = () => {
+interface UserMenuProps {
+  currentUser?: SafeUser | null;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const registerModal = useRegisterModal();
   const loginModal = useLoginModal();
@@ -71,10 +79,37 @@ const UserMenu = () => {
         "
         >
           <div className="flex flex-col">
-            <>
-              <MenuItem label="Login" onClick={showLoginModal} />
-              <MenuItem label="Sign up" onClick={showRegisterModal} />
-            </>
+            {currentUser ? (
+              <>
+                <MenuItem
+                  label="My trips"
+                  onClick={() => router.push('/trips')}
+                />
+                <MenuItem
+                  label="My favorites"
+                  onClick={() => router.push('/favorites')}
+                />
+                <MenuItem
+                  label="My reservations"
+                  onClick={() => router.push('/reservations')}
+                />
+                <MenuItem
+                  label="My properties"
+                  onClick={() => router.push('/properties')}
+                />
+                <MenuItem
+                  label="Airbnb your home"
+                  onClick={() => router.push('/trips')}
+                />
+                <hr />
+                <MenuItem label="Logout" onClick={() => signOut()} />
+              </>
+            ) : (
+              <>
+                <MenuItem label="Login" onClick={showLoginModal} />
+                <MenuItem label="Sign up" onClick={showRegisterModal} />
+              </>
+            )}
           </div>
         </div>
       )}
