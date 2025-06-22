@@ -15,6 +15,7 @@ const MenuItem: React.FC<MenuItemProps> = ({ onClick, label }) => {
         hover:bg-neutral-100
         transition
         font-semibold
+        text-base
         cursor-pointer
       "
     >
