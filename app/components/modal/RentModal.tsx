@@ -12,6 +12,9 @@ import CountrySelect from "../inputs/CountrySelect";
 import dynamic from "next/dynamic";
 import Counter from "../inputs/Counter";
 import ImageUpload from "../inputs/ImageUpload";
+import Input from "../inputs/Input";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 enum STEPS {
   CATEGORY = 0,
@@ -77,6 +80,24 @@ const RentModal = () => {
     if (step !== STEPS.PRICE) {
       return onNext();
     }
+
+    setIsLoading(true);
+    axios
+      .post("/api/listings", data)
+      .then(() => {
+        toast.success("Listing created");
+        router.refresh();
+        reset();
+        setStep(STEPS.CATEGORY);
+        rentModal.onClose();
+      })
+      .catch((errors: any) => {
+        console.error("Create listing error", errors);
+        toast.error("Something went wrong");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
 
   const actionLabel = useMemo(() => {
@@ -190,6 +211,54 @@ const RentModal = () => {
         <ImageUpload
           onChange={(value) => setCustomValue("imageSrc", value)}
           value={imageSrc}
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.DESCRIPTION) {
+    bodyContent = (
+      <div className="flex flex-col gap-8">
+        <Heading
+          title="How would you describe your place?"
+          subtitle="Short and sweet works best!"
+        />
+        <Input
+          id="title"
+          label="Title"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+        <Input
+          id="description"
+          label="Description"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
+        />
+      </div>
+    );
+  }
+
+  if (step === STEPS.PRICE) {
+    bodyContent = (
+      <div>
+        <Heading
+          title="Now, set your price"
+          subtitle="How much do you charge per night?"
+        />
+        <Input
+          id="price"
+          label="Price"
+          formatPrice
+          type="number"
+          disabled={isLoading}
+          register={register}
+          errors={errors}
+          required
         />
       </div>
     );
