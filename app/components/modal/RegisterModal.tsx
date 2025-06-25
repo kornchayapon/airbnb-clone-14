@@ -1,17 +1,18 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import Modal from './Modal';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
-import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
-import Heading from '../Heading';
-import Input from '../inputs/Input';
-import { FcGoogle } from 'react-icons/fc';
-import Button from '../Button';
-import { AiFillGithub } from 'react-icons/ai';
-import toast from 'react-hot-toast';
-import axios from 'axios';
-import useLoginModal from '@/app/hooks/useLoginModal';
+import { useCallback, useState } from "react";
+import Modal from "./Modal";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
+import Heading from "../Heading";
+import Input from "../inputs/Input";
+import { FcGoogle } from "react-icons/fc";
+import Button from "../Button";
+import { AiFillGithub } from "react-icons/ai";
+import toast from "react-hot-toast";
+import axios from "axios";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { signIn } from "next-auth/react";
 
 const RegisterModal = () => {
   const registerModal = useRegisterModal();
@@ -24,9 +25,9 @@ const RegisterModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      name: '',
-      email: '',
-      password: '',
+      name: "",
+      email: "",
+      password: "",
     },
   });
 
@@ -34,9 +35,9 @@ const RegisterModal = () => {
     setIsLoading(true);
 
     axios
-      .post('/api/register', data)
+      .post("/api/register", data)
       .then(() => {
-        toast.success('Registered!');
+        toast.success("Registered!");
         registerModal.onClose();
       })
       .catch((error) => {
@@ -90,13 +91,13 @@ const RegisterModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => {}}
+        onClick={() => signIn("google")}
       />
       <Button
         outline
         label="Continue with Github"
         icon={AiFillGithub}
-        onClick={() => {}}
+        onClick={() => signIn("github")}
       />
       <p>
         Already have an account?
@@ -108,7 +109,7 @@ const RegisterModal = () => {
             hover:underline
           "
         >
-          {' '}
+          {" "}
           Login
         </span>
       </p>

@@ -1,18 +1,18 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import Modal from './Modal';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
-import { useForm, FieldValues, SubmitHandler } from 'react-hook-form';
-import Heading from '../Heading';
-import Input from '../inputs/Input';
-import { FcGoogle } from 'react-icons/fc';
-import Button from '../Button';
-import { AiFillGithub } from 'react-icons/ai';
-import toast from 'react-hot-toast';
-import useLoginModal from '@/app/hooks/useLoginModal';
-import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useCallback, useState } from "react";
+import Modal from "./Modal";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+import { useForm, FieldValues, SubmitHandler } from "react-hook-form";
+import Heading from "../Heading";
+import Input from "../inputs/Input";
+import { FcGoogle } from "react-icons/fc";
+import Button from "../Button";
+import { AiFillGithub } from "react-icons/ai";
+import toast from "react-hot-toast";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const LoginModal = () => {
   const loginModal = useLoginModal();
@@ -27,22 +27,22 @@ const LoginModal = () => {
     formState: { errors },
   } = useForm<FieldValues>({
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   const onSubmit: SubmitHandler<FieldValues> = (data) => {
     setIsLoading(true);
 
-    signIn('credentials', {
+    signIn("credentials", {
       ...data,
       redirect: false,
     }).then((callback) => {
       setIsLoading(false);
 
       if (callback?.ok) {
-        toast.success('Logged in');
+        toast.success("Logged in");
         router.refresh();
         loginModal.onClose();
       }
@@ -88,13 +88,13 @@ const LoginModal = () => {
         outline
         label="Continue with Google"
         icon={FcGoogle}
-        onClick={() => {}}
+        onClick={() => signIn("google")}
       />
       <Button
         outline
         label="Continue with Github"
         icon={AiFillGithub}
-        onClick={() => {}}
+        onClick={() => signIn("github")}
       />
       <p>
         First time using Airbnb?
@@ -106,7 +106,7 @@ const LoginModal = () => {
             hover:underline
           "
         >
-          {' '}
+          {" "}
           Create an account
         </span>
       </p>

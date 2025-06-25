@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useCallback, useState } from 'react';
-import { AiOutlineMenu } from 'react-icons/ai';
-import Avatar from '../Avartar';
-import MenuItem from './MenuItem';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
-import useLoginModal from '@/app/hooks/useLoginModal';
-import { SafeUser } from '@/app/types';
-import { useRouter } from 'next/navigation';
-import { signOut } from 'next-auth/react';
-import useRentModal from '@/app/hooks/useRentModal';
+import { useCallback, useState } from "react";
+import { AiOutlineMenu } from "react-icons/ai";
+import Avatar from "../Avatar";
+import MenuItem from "./MenuItem";
+import useRegisterModal from "@/app/hooks/useRegisterModal";
+import useLoginModal from "@/app/hooks/useLoginModal";
+import { SafeUser } from "@/app/types";
+import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
+import useRentModal from "@/app/hooks/useRentModal";
 
 interface UserMenuProps {
   currentUser?: SafeUser | null;
@@ -84,7 +84,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
         >
           <AiOutlineMenu />
           <div className="hidden md:block">
-            <Avatar src={null} />
+            <Avatar src={currentUser?.image} />
           </div>
         </div>
       </div>
@@ -109,19 +109,19 @@ const UserMenu: React.FC<UserMenuProps> = ({ currentUser }) => {
               <>
                 <MenuItem
                   label="My trips"
-                  onClick={() => router.push('/trips')}
+                  onClick={() => router.push("/trips")}
                 />
                 <MenuItem
                   label="My favorites"
-                  onClick={() => router.push('/favorites')}
+                  onClick={() => router.push("/favorites")}
                 />
                 <MenuItem
                   label="My reservations"
-                  onClick={() => router.push('/reservations')}
+                  onClick={() => router.push("/reservations")}
                 />
                 <MenuItem
                   label="My properties"
-                  onClick={() => router.push('/properties')}
+                  onClick={() => router.push("/properties")}
                 />
                 <MenuItem label="Airbnb your home" onClick={onRent} />
                 <hr />
