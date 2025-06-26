@@ -20,7 +20,10 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
   const location = getByValue(data.locationValue);
 
   return (
-    <div className="cols-span-1 cursor-pointer group">
+    <div
+      onClick={() => router.push(`/listings/${data.id}`)}
+      className="cols-span-1 cursor-pointer group"
+    >
       <div className="flex flex-col gap-2 w-full">
         <div
           className="

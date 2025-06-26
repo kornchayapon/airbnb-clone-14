@@ -8,7 +8,7 @@ interface HomeProps {
   searchParams: IListingParams;
 }
 
-const Home: React.FC<HomeProps> = async ({ searchParams }) => {
+const Home = async ({ searchParams }: HomeProps) => {
   const listings = await getListings(searchParams);
   const currentUser = await getCurrentUser();
 
@@ -34,7 +34,7 @@ const Home: React.FC<HomeProps> = async ({ searchParams }) => {
         {listings.map((listing: any) => (
           <ListingCard
             currentUser={currentUser}
-            key={listing.ig}
+            key={listing.id}
             data={listing}
           />
         ))}
