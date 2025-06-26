@@ -5,9 +5,13 @@ import ListingHead from "@/app/components/listings/ListingHead";
 import ListingInfo from "@/app/components/listings/ListingInfo";
 import ListingReservation from "@/app/components/listings/ListingReservation";
 import { categories } from "@/app/components/navbar/Categories";
+import useLoginModal from "@/app/hooks/useLoginModal";
 import { SafeListing, SafeUser } from "@/app/types";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
 import { Range } from "react-date-range";
+import toast from "react-hot-toast";
 
 const initialDateRange = {
   startDate: new Date(),
@@ -26,6 +30,7 @@ const ListingClient: React.FC<ListingClientProps> = ({
   listing,
   currentUser,
 }) => {
+  const loginModal = useLoginModal();
   const category = useMemo(() => {
     return categories.find((items) => items.label === listing.category);
   }, [listing.category]);
@@ -34,12 +39,40 @@ const ListingClient: React.FC<ListingClientProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [dateRange, setDateRange] = useState<Range>(initialDateRange);
 
+  const router = useRouter();
+
   const disabledDates = useMemo(() => {
     let dates: Date[] = [];
     return dates;
   }, []);
 
-  const onCreateReservation = useCallback(() => {}, []);
+  const onCreateReservation = useCallback(() => {
+    if (!currentUser) {
+      return loginModal.onOpen();
+    }
+
+    setIsLoading(true);
+
+    axios
+      .post("/api/reservations", {
+        totalPrice,
+        startDate: dateRange.startDate,
+        endDate: dateRange.endDate,
+        listingId: listing.id,
+      })
+      .then(() => {
+        toast.success("Listing reserved!");
+        setDateRange(initialDateRange);
+        router.push("/trips");
+      })
+      .catch((error: any) => {
+        console.error("post reserved error", error);
+        toast.error("Something went wrong.");
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, [totalPrice, dateRange, listing?.id, router, currentUser, loginModal]);
 
   return (
     <Container>
