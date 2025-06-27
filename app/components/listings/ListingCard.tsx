@@ -13,7 +13,7 @@ interface ListingCardProps {
   // reservation?: SafeReservation | null;
 }
 
-const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
+const ListingCard: React.FC<ListingCardProps> = ({ data, currentUser }) => {
   const router = useRouter();
   const { getByValue } = useCountries();
 
@@ -22,7 +22,7 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
   return (
     <div
       onClick={() => router.push(`/listings/${data.id}`)}
-      className="cols-span-1 cursor-pointer group"
+      className="col-span-1 cursor-pointer group"
     >
       <div className="flex flex-col gap-2 w-full">
         <div
@@ -46,15 +46,15 @@ const ListingCard: React.FC<ListingCardProps> = ({ data }) => {
             src={data.imageSrc}
             alt="Listing"
           />
-          {/* <div
+          <div
             className="
               absolute
               top-3
               right-3
             "
           >
-            <HeartButton />
-          </div> */}
+            <HeartButton listingId={data.id} currentUser={currentUser} />
+          </div>
         </div>
         <div className="font-semibold text-lg">
           {location?.region}, {location?.label}
