@@ -6,10 +6,11 @@ import ListingInfo from "@/app/components/listings/ListingInfo";
 import ListingReservation from "@/app/components/listings/ListingReservation";
 import { categories } from "@/app/components/navbar/Categories";
 import useLoginModal from "@/app/hooks/useLoginModal";
-import { SafeListing, SafeUser } from "@/app/types";
+import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
 import axios from "axios";
+import { differenceInDays, eachDayOfInterval } from "date-fns";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Range } from "react-date-range";
 import toast from "react-hot-toast";
 
@@ -24,11 +25,13 @@ interface ListingClientProps {
     user: SafeUser;
   };
   currentUser?: SafeUser | null;
+  reservations?: SafeReservation[];
 }
 
 const ListingClient: React.FC<ListingClientProps> = ({
   listing,
   currentUser,
+  reservations = [],
 }) => {
   const loginModal = useLoginModal();
   const category = useMemo(() => {
@@ -43,8 +46,18 @@ const ListingClient: React.FC<ListingClientProps> = ({
 
   const disabledDates = useMemo(() => {
     let dates: Date[] = [];
+
+    reservations.forEach((reservation: any) => {
+      const range = eachDayOfInterval({
+        start: new Date(reservation.startDate),
+        end: new Date(reservation.endDate),
+      });
+
+      dates = [...dates, ...range];
+    });
+
     return dates;
-  }, []);
+  }, [reservations]);
 
   const onCreateReservation = useCallback(() => {
     if (!currentUser) {
@@ -73,6 +86,18 @@ const ListingClient: React.FC<ListingClientProps> = ({
         setIsLoading(false);
       });
   }, [totalPrice, dateRange, listing?.id, router, currentUser, loginModal]);
+
+  useEffect(() => {
+    if (dateRange.startDate && dateRange.endDate) {
+      const dayCount = differenceInDays(dateRange.endDate, dateRange.startDate);
+
+      if (dayCount && listing.price) {
+        setTotalPrice(dayCount * listing.price);
+      } else {
+        setTotalPrice(listing.price);
+      }
+    }
+  }, [dateRange, listing.price]);
 
   return (
     <Container>

@@ -1,23 +1,70 @@
 "use client";
 
-import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
-import Image from "next/image";
-import HeartButton from "../HeartButton";
+import { format } from "date-fns";
 import { useRouter } from "next/navigation";
+import { useCallback, useMemo } from "react";
+import Image from "next/image";
+
+import { SafeListing, SafeReservation, SafeUser } from "@/app/types";
+import HeartButton from "../HeartButton";
 import useCountries from "@/app/hooks/useCountries";
-import { useMemo } from "react";
+import Button from "../Button";
 
 interface ListingCardProps {
   data: SafeListing;
+  reservation?: SafeReservation;
+  onAction?: (id: string) => void;
+  disabled?: boolean;
+  actionLabel?: string;
+  actionId?: string;
   currentUser?: SafeUser | null;
-  // reservation?: SafeReservation | null;
 }
 
-const ListingCard: React.FC<ListingCardProps> = ({ data, currentUser }) => {
+const ListingCard: React.FC<ListingCardProps> = ({
+  data,
+  reservation,
+  onAction,
+  disabled,
+  actionLabel,
+  actionId = "",
+  currentUser,
+}) => {
   const router = useRouter();
   const { getByValue } = useCountries();
 
   const location = getByValue(data.locationValue);
+
+  const price = useMemo(() => {
+    if (reservation) {
+      return reservation.totalPrice;
+    }
+
+    return data.price;
+  }, [reservation, data.price]);
+
+  const reservationDate = useMemo(() => {
+    if (!reservation) {
+      return null;
+    }
+
+    const startDate = new Date(reservation.startDate);
+    const endDate = new Date(reservation.endDate);
+
+    return `${format(startDate, "PP")} - ${format(endDate, "PP")}`;
+  }, []);
+
+  const handleCancel = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.stopPropagation();
+
+      if (disabled) {
+        return;
+      }
+
+      onAction?.(actionId);
+    },
+    [disabled, onAction, actionId]
+  );
 
   return (
     <div
@@ -59,11 +106,21 @@ const ListingCard: React.FC<ListingCardProps> = ({ data, currentUser }) => {
         <div className="font-semibold text-lg">
           {location?.region}, {location?.label}
         </div>
-        <div className="font-light text-neutral-500">{data.category}</div>
-        <div className="flex flex-row items-center gap-1">
-          <div className="font-semibold">$ {data.price}</div>
-          <div className="font-light">night</div>
+        <div className="font-light text-neutral-500">
+          {reservationDate || data.category}
         </div>
+        <div className="flex flex-row items-center gap-1">
+          <div className="font-semibold">$ {price}</div>
+          {!reservation && <div className="font-light">night</div>}
+        </div>
+        {onAction && actionLabel && (
+          <Button
+            disabled={disabled}
+            small
+            label={actionLabel}
+            onClick={handleCancel}
+          />
+        )}
       </div>
     </div>
   );
