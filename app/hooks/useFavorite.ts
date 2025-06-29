@@ -17,7 +17,7 @@ const useFavorite = ({ listingId, currentUser }: IUseFavorite) => {
   const router = useRouter();
 
   const hasFavorite = useMemo(() => {
-    const list = currentUser?.favorites || [];
+    const list = currentUser?.favoriteIds || [];
 
     return list.includes(listingId);
   }, [currentUser, listingId]);
