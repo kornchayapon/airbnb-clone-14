@@ -1,20 +1,21 @@
-import { Nunito } from 'next/font/google';
-import './globals.css';
+import { Nunito } from "next/font/google";
+import "./globals.css";
 
-import Navbar from './components/navbar/Navbar';
-import LoginModal from './components/modal/LoginModal';
-import RegisterModal from './components/modal/RegisterModal';
-import ToasterProvider from './providers/ToasterProvider';
-import getCurrentUser from './actions/getCurrentUser';
-import RentModal from './components/modal/RentModal';
+import Navbar from "./components/navbar/Navbar";
+import LoginModal from "./components/modal/LoginModal";
+import RegisterModal from "./components/modal/RegisterModal";
+import ToasterProvider from "./providers/ToasterProvider";
+import getCurrentUser from "./actions/getCurrentUser";
+import RentModal from "./components/modal/RentModal";
+import SearchModal from "./components/modal/SearchModal";
 
 export const metadata = {
-  title: 'Airbnb',
-  description: 'Airbnb Clone with nextjs14',
+  title: "Airbnb",
+  description: "Airbnb Clone with nextjs14",
 };
 
 const font = Nunito({
-  subsets: ['latin'],
+  subsets: ["latin"],
 });
 
 export default async function RootLayout({
@@ -27,6 +28,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
+        <SearchModal />
         <ToasterProvider />
         <RentModal />
         <LoginModal />

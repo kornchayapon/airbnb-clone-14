@@ -1,26 +1,26 @@
 import prisma from "@/app/libs/prismadb";
 
-export interface IListingParams {
+export interface IListingsParams {
   userId?: string;
-  guestCount?: string;
-  roomCount?: string;
-  bathroomCount?: string;
+  guestCount?: number;
+  roomCount?: number;
+  bathroomCount?: number;
   startDate?: string;
   endDate?: string;
   locationValue?: string;
   category?: string;
 }
 
-export default async function getListings(params: IListingParams) {
+export default async function getListings(params: IListingsParams) {
   try {
     const {
       userId,
-      guestCount,
       roomCount,
+      guestCount,
       bathroomCount,
+      locationValue,
       startDate,
       endDate,
-      locationValue,
       category,
     } = params;
 
@@ -35,15 +35,21 @@ export default async function getListings(params: IListingParams) {
     }
 
     if (roomCount) {
-      query.roomCount = roomCount;
+      query.roomCount = {
+        gte: +roomCount,
+      };
     }
 
     if (guestCount) {
-      query.guestCount = guestCount;
+      query.guestCount = {
+        gte: +guestCount,
+      };
     }
 
     if (bathroomCount) {
-      query.bathroomCount = bathroomCount;
+      query.bathroomCount = {
+        gte: +bathroomCount,
+      };
     }
 
     if (locationValue) {
@@ -52,7 +58,7 @@ export default async function getListings(params: IListingParams) {
 
     if (startDate && endDate) {
       query.NOT = {
-        reservation: {
+        reservations: {
           some: {
             OR: [
               {
@@ -60,8 +66,8 @@ export default async function getListings(params: IListingParams) {
                 startDate: { lte: startDate },
               },
               {
-                endDate: { gte: endDate },
                 startDate: { lte: endDate },
+                endDate: { gte: endDate },
               },
             ],
           },
@@ -83,7 +89,6 @@ export default async function getListings(params: IListingParams) {
 
     return safeListings;
   } catch (error: any) {
-    console.error("getListing error", error);
     throw new Error(error);
   }
 }
